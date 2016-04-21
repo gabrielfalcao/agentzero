@@ -1,0 +1,4 @@
+export PATH=$PATH:$HOME/agentzero/bin
+export AGENTZERO_API_ADDRESS=tcp://0.0.0.0:8000
+env | grep 'AGENTZERO.*'
+workon agentzero

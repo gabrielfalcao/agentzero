@@ -1,0 +1,1 @@
+include COPYING *.rst agentzero/docs/* agentzero/docs/source/*
