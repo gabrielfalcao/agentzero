@@ -2,6 +2,7 @@ AgentZero 0.0.2 - high-level ZeroMQ socket managers
 ===================================================
 
 .. image:: https://readthedocs.org/projects/agentzero/badge/?version=latest
+    :target: http://agentzero.readthedocs.io/en/latest/
 
 .. image:: https://travis-ci.org/gabrielfalcao/agentzero.svg?branch=master
     :target: https://travis-ci.org/gabrielfalcao/agentzero
