@@ -53,7 +53,10 @@ dependencies = [
 setup(
     name='agentzero',
     version=read_version(),
-    description='AgentZero',
+    description="\n".join([
+        'AgentZero lets you create, connect, bind, and modify zeromq sockets in runtime with ease.',
+        'It works great with gevent, making it possible to create network applications with simple code that performs complex operations.',
+    ]),
     entry_points={
         'console_scripts': ['agentzero = agentzero.console.main:entrypoint'],
     },

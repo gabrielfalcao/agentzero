@@ -1,6 +1,11 @@
 AgentZero 0.0.2 - high-level ZeroMQ socket managers
 ===================================================
 
+.. image:: https://readthedocs.org/projects/agentzero/badge/?version=latest
+
+.. image:: https://travis-ci.org/gabrielfalcao/agentzero.svg?branch=master
+    :target: https://travis-ci.org/gabrielfalcao/agentzero
+
 AgentZero lets you create, connect, bind, and modify zeromq sockets in
 runtime with ease.
 
@@ -30,5 +35,3 @@ basic usage
 ===========
 
 .. code:: python
-
-
