@@ -20,11 +20,11 @@ from collections import namedtuple
 from zmq.error import ZMQError
 from zmq.utils.strtypes import cast_bytes
 
+from agentzero import serializers
 from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
-from agentzero import serializers
 
 
 DEFAULT_TIMEOUT_IN_SECONDS = .5
