@@ -297,6 +297,6 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
-    'redis': ('https://redis-py.readthedocs.org/en/latest/', None),
-    'zmq': ('https://pyzmq.readthedocs.org/en/latest/', None),
+    'redis': ('https://redis-py.readthedocs.io/en/latest/', None),
+    'zmq': ('https://pyzmq.readthedocs.io/en/latest/', None),
 }
