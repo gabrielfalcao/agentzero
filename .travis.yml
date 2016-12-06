@@ -1,0 +1,22 @@
+language: python
+sudo: false
+python:
+  - "2.7"
+  - "3.5"
+
+matrix:
+  allow_failures:
+    - python: "3.5"
+
+env:
+  - TEST_TYPE=unit
+  - TEST_TYPE=functional
+
+install:
+  - pip install -r development.txt
+
+script:
+  - make $TEST_TYPE
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
