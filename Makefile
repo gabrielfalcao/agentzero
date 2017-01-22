@@ -70,7 +70,9 @@ ensure-dependencies:
 
 release: tests
 	@./.release
-	@python setup.py sdist register upload
+	@rm -rf dist
+	@python setup.py sdist
+	@twine upload dist/*.tar.gz
 
 list:
 	@$(executable) list
