@@ -17,6 +17,10 @@ runtime with ease.
 It works great with gevent, making it possible to create network
 applications with simple code that performs complex operations.
 
+
+Full Documentation: `agentzero.readthedocs.io <https://agentzero.readthedocs.io/en/latest/>`_
+
+
 Features:
 ---------
 
@@ -35,8 +39,3 @@ installing
 .. code:: bash
 
     pip install agentzero
-
-basic usage
-===========
-
-.. code:: python
