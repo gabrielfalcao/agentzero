@@ -8,6 +8,7 @@ name = "pypi"
 [packages]
 
 pyzmq = "==16.0.2"
+gevent = "==1.2.2"
 
 
 [dev-packages]
@@ -22,3 +23,8 @@ freezegun = "*"
 [requires]
 
 python_version = "3.6"
+
+
+[pipenv]
+
+keep_outdated = false
