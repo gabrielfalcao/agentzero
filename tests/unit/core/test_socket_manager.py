@@ -874,7 +874,54 @@ def test_get_log_handler():
 
 @patch('agentzero.core.SocketManager.get_by_name')
 def test_socket_manager_subscribe(get_by_name):
-    ("SocketManager().subscribe() should yield the topic and ")
+    ("SocketManager().subscribe() should yield the topic and yield an Event")
+
+    # Background: wait_until_ready is mocked to return the socket
+    socket = get_by_name.return_value
+    socket.recv_multipart.side_effect = [
+        ['metrics:whatevs', 'the-data'],
+        ['action', 'test'],
+    ]
+
+    # Given a zmq mock
+    zmq = Mock()
+
+    # And a context
+    context = Mock()
+
+    # And a serializer
+    serializer = Mock(name='serializer')
+
+    # And a socket manager
+    manager = SocketManager(zmq, context, serialization_backend=serializer)
+
+    # And a socket
+    socket = manager.create('foobar', zmq.REP)
+
+    # When I perform one iteration in the subscriber
+    event1 = next(manager.subscribe('foobar'))
+    topic1, payload1 = event1.topic, event1.data
+    event2 = next(manager.subscribe('foobar'))
+
+    # Then it should have unpacked the payload after receiving
+    serializer.unpack.assert_has_calls([
+        call('the-data'),
+        call('test'),
+    ])
+
+    # And the result should be the unpacked value
+    payload1.should.equal(serializer.unpack.return_value)
+
+    # And the topic should be the expected
+    topic1.should.equal('metrics:whatevs')
+
+    event2.should.be.an(Event)
+
+
+@patch('agentzero.core.SocketManager.get_by_name')
+def test_socket_manager_subscribe_invalid_callable(get_by_name):
+    ("SocketManager().subscribe() should raise TypeError "
+     "if the keep_polling callable is not callable")
 
     # Background: wait_until_ready is mocked to return the socket
     socket = get_by_name.return_value
@@ -896,17 +943,8 @@ def test_socket_manager_subscribe(get_by_name):
     socket = manager.create('foobar', zmq.REP)
 
     # When I perform one iteration in the subscriber
-    event = next(manager.subscribe('foobar'))
-    topic, payload = event.topic, event.data
-
-    # Then it should have unpacked the payload after receiving
-    serializer.unpack.assert_called_once_with('the-data')
-
-    # And the result should be the unpacked value
-    payload.should.equal(serializer.unpack.return_value)
-
-    # And the topic should be the expected
-    topic.should.equal('metrics:whatevs')
+    when_called = next.when.called_with(manager.subscribe('foobar', keep_polling='not a callable'))
+    when_called.should.have.raised(TypeError, 'SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean')
 
 
 @patch('agentzero.core.SocketManager.set_topic')
@@ -1137,3 +1175,85 @@ def test_socket_close_no_socket(get_by_name):
 
     # Then it should not have called unregister
     manager.poller.unregister.called.should.be.false
+
+
+@patch('agentzero.core.SocketManager.engage')
+@patch('agentzero.core.SocketManager.register_socket')
+@patch('agentzero.core.SocketManager.get_by_name')
+def test_socket_disconnect(get_by_name, register_socket, engage):
+    ("SocketManager().disconnect() should get by name, unregister then "
+     "disconnect to the given address.")
+
+    # Given a zmq mock
+    zmq = Mock()
+    poller = zmq.Poller.return_value
+
+    # And a poller that raises an exception upon unregister
+    poller.unregister.side_effect = RuntimeError('boom')
+
+    # And a context
+    context = Mock()
+
+    # And a socket manager
+    manager = SocketManager(zmq, context)
+    manager.addresses = {
+        'foobar': 'baz',
+        'another': 'socket',
+    }
+    # When I call disconnect
+    manager.disconnect('foobar').should.be.true
+
+    # Then it should have removed the socket address from the table
+    manager.addresses.should.equal({
+        'another': 'socket',
+    })
+
+
+@patch('agentzero.core.SocketManager.engage')
+@patch('agentzero.core.SocketManager.register_socket')
+@patch('agentzero.core.SocketManager.get_by_name')
+def test_socket_disconnect_not_registered(get_by_name, register_socket, engage):
+    ("SocketManager().disconnect() should return False if no sockets are registered with that name")
+    # Background: get_by_name returns None
+    get_by_name.return_value = None
+
+    # Given a zmq mock
+    zmq = Mock()
+
+    # And a context
+    context = Mock()
+
+    # And a socket manager without registered sockets
+    manager = SocketManager(zmq, context)
+    # When I call disconnect
+    result = manager.disconnect('foobar')
+
+    # Then it should return false
+    result.should.be.false
+
+
+@patch('agentzero.core.ZMQPubHandler')
+@patch('agentzero.core.SocketManager.get_by_name')
+@patch('agentzero.core.SocketManager.publish_safe')
+def test_socket_get_logger(publish_safe, get_by_name, ZMQPubHandler):
+    ("SocketManager().get_logger() should return a logger"
+     " with an attached ZMQPubHandler")
+    # Background: get_by_name returns None
+    get_by_name.return_value = None
+
+    # Given a zmq mock
+    zmq = Mock()
+
+    # And a context
+    context = Mock()
+
+    # And a socket manager without registered sockets
+    manager = SocketManager(zmq, context)
+    # When I call disconnect
+    logger = manager.get_logger('foobar')
+
+    # Then it should return false
+    logger.should.be.a('logging.Logger')
+    logger.handlers.should.equal([
+        ZMQPubHandler.return_value
+    ])

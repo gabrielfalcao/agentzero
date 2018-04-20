@@ -13,8 +13,9 @@ agentzero.core
 import zmq
 import time
 import logging
+import collections
+
 from uuid import uuid4
-from collections import OrderedDict
 
 from zmq.error import ZMQError
 from zmq.utils.strtypes import cast_bytes as _cast_bytes
@@ -24,7 +25,6 @@ from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
-import collections
 
 
 def cast_bytes(s):
@@ -87,11 +87,11 @@ class SocketManager(object):
         self.zmq = zmq
         self.context = context
         # book-keeping of the the sockets themselves
-        self.sockets = OrderedDict()
-        self.addresses = OrderedDict()
+        self.sockets = collections.OrderedDict()
+        self.addresses = collections.OrderedDict()
         self.poller = self.zmq.Poller()
         # book-keeping of sockets registered with the poller
-        self.registry = OrderedDict()
+        self.registry = collections.OrderedDict()
         self.serialization_backend = serialization_backend or serializers.JSON()
 
         self.polling_timeout = polling_timeout
@@ -366,11 +366,12 @@ class SocketManager(object):
 
         """
         socket = self.get_by_name(name)
-        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ''))
 
         keep_polling = keep_polling or (lambda: socket is not None)
         if not isinstance(keep_polling, collections.Callable):
             raise TypeError('SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean')
+
+        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ''))
 
         while keep_polling():
             topic, raw = socket.recv_multipart()
@@ -410,7 +411,7 @@ class SocketManager(object):
         self.registry.pop(socket, None)
         try:
             self.poller.unregister(socket)
-        except:
+        except Exception:
             pass
         return True
 
@@ -726,7 +727,7 @@ class SocketManager(object):
         """
         polling_timeout = timeout is None and self.polling_timeout or timeout
 
-        return OrderedDict(self.poller.poll(polling_timeout))
+        return collections.OrderedDict(self.poller.poll(polling_timeout))
 
     def get_log_handler(self, socket_name, topic_name='logs'):
         """returns an instance of :py:class:ZMQPubHandler attached to a previously-created socket.
