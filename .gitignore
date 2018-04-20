@@ -22,3 +22,5 @@ supervisord.pid
 dist/*.gz
 docs/build
 tasks.md
+.tox/
+Pipfile.lock
