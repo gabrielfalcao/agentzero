@@ -11,6 +11,7 @@ from agentzero.util import get_public_ip_address
 from agentzero.util import get_public_zmq_address
 from agentzero.util import extract_hostname_from_tcp_address
 from agentzero.util import fix_zeromq_tcp_address
+from tests.helpers import only_py2, only_py3
 
 
 @patch('agentzero.util.time')
@@ -58,27 +59,6 @@ def test_get_free_tcp_port(socket):
     sock.close.assert_called_once_with()
 
 
-@patch('agentzero.util.traceback')
-def test_serialized_exception(traceback):
-    ('util.serialized_exception() should serialize the traceback')
-
-    # Background: traceback.format_exc is mocked
-    traceback.format_exc.return_value = 'the traceback'
-
-    # Given an exception
-    e = ValueError('boom')
-
-    # When I call serialize it
-    result = serialized_exception(e)
-
-    # Then it should return a dict
-    result.should.equal({
-        'module': 'exceptions',
-        'name': 'ValueError',
-        'traceback': 'the traceback'
-    })
-
-
 def test_convert_from_seconds_to_datetime():
     ("util.datetime_from_seconds() should convert from epoch seconds to a datetime")
 
@@ -90,7 +70,7 @@ def test_convert_from_seconds_to_datetime():
 @patch('agentzero.util.socket')
 def test_get_hostname(socket):
     ("util.get_hostname() should return the result of socket.gethostname()")
-
+    socket.gethostname.return_value = 'the-hostname'
     get_hostname().should.equal(socket.gethostname.return_value)
 
 
@@ -133,9 +113,23 @@ def test_fix_zeromq_tcp_address(get_public_ip_address):
     result.should.equal('ipc:///tmp/foobar.sock')
 
 
+@only_py2
 @patch('agentzero.util.get_free_tcp_port')
 @patch('agentzero.util.get_hostname')
-def test_get_default_bind_address(get_hostname, get_free_tcp_port):
+def test_get_default_bind_address_py2(get_hostname, get_free_tcp_port):
+    ('util.get_default_bind_address() uses the hostname to determine the public address')
+
+    get_free_tcp_port.return_value = 4000
+    get_hostname.return_value = b'yourmachine'
+    result = get_public_zmq_address()
+
+    result.should.equal('tcp://yourmachine:4000')
+
+
+@only_py3
+@patch('agentzero.util.get_free_tcp_port')
+@patch('agentzero.util.get_hostname')
+def test_get_default_bind_address_py3(get_hostname, get_free_tcp_port):
     ('util.get_default_bind_address() uses the hostname to determine the public address')
 
     get_free_tcp_port.return_value = 4000
@@ -143,3 +137,47 @@ def test_get_default_bind_address(get_hostname, get_free_tcp_port):
     result = get_public_zmq_address()
 
     result.should.equal('tcp://yourmachine:4000')
+
+
+@only_py2
+@patch('agentzero.util.traceback')
+def test_serialized_exception_py2(traceback):
+    ('util.serialized_exception() should serialize the traceback')
+
+    # Background: traceback.format_exc is mocked
+    traceback.format_exc.return_value = 'the traceback'
+
+    # Given an exception
+    e = ValueError('boom')
+
+    # When I call serialize it
+    result = serialized_exception(e)
+
+    # Then it should return a dict
+    result.should.equal({
+        'module': 'exceptions',
+        'name': 'ValueError',
+        'traceback': 'the traceback'
+    })
+
+
+@only_py3
+@patch('agentzero.util.traceback')
+def test_serialized_exception_py3(traceback):
+    ('util.serialized_exception() should serialize the traceback')
+
+    # Background: traceback.format_exc is mocked
+    traceback.format_exc.return_value = 'the traceback'
+
+    # Given an exception
+    e = ValueError('boom')
+
+    # When I call serialize it
+    result = serialized_exception(e)
+
+    # Then it should return a dict
+    result.should.equal({
+        'module': 'builtins',
+        'name': 'ValueError',
+        'traceback': 'the traceback'
+    })

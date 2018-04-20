@@ -1,9 +1,12 @@
 -r requirements.txt
-agile==1.3.1
-supervisor==3.1.3
-ipdb==0.8.1
-nose-randomly==1.1.0
-Sphinx==1.3.1
-flake8==2.5.0
-freezegun==0.3.7
-gevent==1.1.1
+coverage==4.5.1
+flake8==3.4.1
+freezegun==0.3.10
+ipdb==0.10.3
+mock==2.0.0
+nose-randomly==1.2.5
+nose==1.3.7
+rednose==1.3.0
+sphinx==1.6.3
+sure==1.4.9
+tox==2.8.2

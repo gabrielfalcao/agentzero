@@ -32,7 +32,7 @@ def read_version():
 
 
 dependencies = [
-    'pyzmq==16.0.0'
+    'pyzmq==16.0.2',
 ]
 
 

@@ -1,0 +1,31 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+pyzmq = "==16.0.2"
+gevent = "==1.2.2"
+six = "*"
+
+
+[dev-packages]
+
+nose = "*"
+coverage = "*"
+rednose = "*"
+sure = "*"
+freezegun = "*"
+
+
+[requires]
+
+python_version = "3.6"
+
+
+[pipenv]
+
+keep_outdated = false

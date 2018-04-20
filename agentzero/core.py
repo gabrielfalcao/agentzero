@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from __future__ import unicode_literals
 
 """
 agentzero.core
@@ -13,17 +13,26 @@ agentzero.core
 import zmq
 import time
 import logging
+import collections
+
 from uuid import uuid4
-from collections import OrderedDict
 
 from zmq.error import ZMQError
-from zmq.utils.strtypes import cast_bytes
+from zmq.utils.strtypes import cast_bytes as _cast_bytes
 
 from agentzero import serializers
 from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
+
+
+def cast_bytes(s):
+    return _cast_bytes(str(s))
+
+
+def cast_string(s):
+    return str(s)
 
 
 DEFAULT_TIMEOUT_IN_SECONDS = 10
@@ -78,21 +87,21 @@ class SocketManager(object):
         self.zmq = zmq
         self.context = context
         # book-keeping of the the sockets themselves
-        self.sockets = OrderedDict()
-        self.addresses = OrderedDict()
+        self.sockets = collections.OrderedDict()
+        self.addresses = collections.OrderedDict()
         self.poller = self.zmq.Poller()
         # book-keeping of sockets registered with the poller
-        self.registry = OrderedDict()
+        self.registry = collections.OrderedDict()
         self.serialization_backend = serialization_backend or serializers.JSON()
 
         self.polling_timeout = polling_timeout
         self.timeout = timeout
 
     def __repr__(self):
-        return b'SocketManager(sockets={0})'.format(repr(self.sockets.keys()))
+        return 'SocketManager(sockets={0})'.format(repr(list(self.sockets.keys())))
 
     def __del__(self):
-        for socket in self.sockets.values():
+        for socket in list(self.sockets.values()):
             try:
                 socket.close()
             except:
@@ -154,7 +163,7 @@ class SocketManager(object):
         socket = self.get_by_name(name)
 
         payload = self.serialization_backend.pack(data)
-        socket.send_multipart([bytes(topic), payload])
+        socket.send_multipart([cast_bytes(topic), cast_bytes(payload)])
 
     def recv_event_safe(self, name, topic=False, *args, **kw):
         """waits for the socket to become available then receives multipart
@@ -191,9 +200,9 @@ class SocketManager(object):
           >>> event.topic, event.data
           'logs:2016-06-20', {'stdout': 'hello world'}
         """
-        topic = topic or b''
+        topic = topic or ''
 
-        if not isinstance(topic, basestring):
+        if not isinstance(topic, bytes):
             msg = (
                 'recv_event_safe() takes a string, '
                 'None or False as argument, '
@@ -250,7 +259,7 @@ class SocketManager(object):
         """
 
         socket = self.get_by_name(name)
-        socket.setsockopt(option, value)
+        socket.setsockopt(option, cast_bytes(value))
 
     def set_topic(self, name, topic):
         """shortcut to :py:meth:SocketManager.set_socket_option(zmq.TOPIC, topic)
@@ -275,7 +284,7 @@ class SocketManager(object):
           'logs:2016-06-20', {'stdout': 'hello world'}
         """
 
-        safe_topic = bytes(topic)
+        safe_topic = cast_string(topic)
         self.set_socket_option(name, self.zmq.SUBSCRIBE, safe_topic)
 
     def recv_safe(self, name, *args, **kw):
@@ -357,10 +366,13 @@ class SocketManager(object):
 
         """
         socket = self.get_by_name(name)
-        socket.setsockopt(self.zmq.SUBSCRIBE, bytes(topic or ''))
+        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ''))
 
-        keep_polling = keep_polling or (lambda: socket is not None)
-        if not callable(keep_polling):
+        def socket_exists():
+            return self.get_by_name(name) is not None
+
+        keep_polling = keep_polling or socket_exists
+        if not isinstance(keep_polling, collections.Callable):
             raise TypeError('SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean')
 
         while keep_polling():
@@ -401,7 +413,7 @@ class SocketManager(object):
         self.registry.pop(socket, None)
         try:
             self.poller.unregister(socket)
-        except:
+        except Exception:
             pass
         return True
 
@@ -543,7 +555,7 @@ class SocketManager(object):
 
         port = socket.bind_to_random_port(local_address)
 
-        address = ':'.join([local_address, str(port)])
+        address = ':'.join(map(cast_string, [local_address, cast_string(port)]))
 
         self.addresses[socket_name] = address
 
@@ -672,7 +684,7 @@ class SocketManager(object):
             raise SocketAlreadyExists(self, name)
 
         self.sockets[name] = self.context.socket(socket_type)
-        self.set_socket_option(name, zmq.IDENTITY, str(uuid4()))
+        self.set_socket_option(name, zmq.IDENTITY, cast_bytes(uuid4()))
         return self.get_by_name(name)
 
     def get_or_create(self, name, socket_type, polling_mechanism):
@@ -717,7 +729,7 @@ class SocketManager(object):
         """
         polling_timeout = timeout is None and self.polling_timeout or timeout
 
-        return OrderedDict(self.poller.poll(polling_timeout))
+        return collections.OrderedDict(self.poller.poll(polling_timeout))
 
     def get_log_handler(self, socket_name, topic_name='logs'):
         """returns an instance of :py:class:ZMQPubHandler attached to a previously-created socket.
@@ -794,7 +806,7 @@ class ZMQPubHandler(logging.Handler):
     }
 
     def __init__(self, socket_manager, socket_name='logs', topic_name='logs'):
-        logging.Handler.__init__(self)
+        super(ZMQPubHandler, self).__init__()
 
         self.sockets = socket_manager
         self.socket_name = socket_name

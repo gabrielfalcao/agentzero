@@ -21,7 +21,7 @@ AGENTZERO_LOGLEVEL		:= DEBUG
 AGENTZERO_API_ADDRESS		:=
 AGENTZERO_PUBLISHER_ADDRESS	:=
 PATH				:= $(PATH):$(shell pwd)
-executable			:= python -m agentzero.console.main
+executable			:= pipenv run python -m agentzero.console.main
 export TZ
 export PATH
 export PYTHONPATH
@@ -47,13 +47,15 @@ clean:
 	git clean -Xdf
 
 unit:
-	nosetests -x --with-randomly --with-coverage --cover-erase --cover-package=agentzero --verbosity=2 -s --rednose tests/unit
+	@pipenv run nosetests --cover-erase --cover-package=agentzero \
+	    tests/unit
+
 
 functional:
-	nosetests -x  --with-randomly --with-coverage --cover-erase \
+	@pipenv run nosetests \
 	    --cover-package=agentzero.core \
 	    --cover-package=agentzero.serializers \
-	    --verbosity=2 -s --rednose tests/functional
+	    tests/functional
 
 
 
@@ -63,14 +65,16 @@ prepare: remove
 	ensure-dependencies
 
 remove:
-	-@pip uninstall -y agentzero
+	-@pipenv uninstall -y agentzero
 
 ensure-dependencies:
-	@CFLAGS='-std=c99' pip install -r development.txt
+	@CFLAGS='-std=c99' pipenv install --dev --skip-lock -r development.txt
 
 release: tests
 	@./.release
-	@python setup.py sdist register upload
+	@rm -rf dist
+	@pipenv run python setup.py sdist
+	@pipenv run twine upload dist/*.tar.gz
 
 list:
 	@$(executable) list
