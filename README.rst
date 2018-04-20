@@ -10,9 +10,15 @@ AgentZero 0.3.3 - high-level ZeroMQ socket managers
 .. image:: https://codecov.io/gh/gabrielfalcao/agentzero/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/gabrielfalcao/agentzero
 
+**Supports Python 2.7 and 3.6**
 
-AgentZero is a pluripotent networking library that lets you create, connect, bind, and modify ZeroMQ sockets in
-runtime with ease.
+--------------------------------------------------------------------------------------
+
+What is AgentZero ?
+-------------------
+
+AgentZero is a pluripotent networking library that lets you create,
+connect, bind, and modify ZeroMQ sockets in runtime with ease.
 
 It works great with gevent, making it possible to create network
 applications with simple code that performs complex operations.
@@ -29,14 +35,15 @@ Features:
 -  ability to wait until a socket has received data
 -  builtin python log handler that publishes logs in a ZMQ PUB socket
 
-installing
+Installing
 ==========
 
 .. code:: bash
 
     pip install agentzero
 
-basic usage
-===========
 
-.. code:: python
+Documentation
+=============
+
+`agentzero.readthedocs.io <https://agentzero.readthedocs.io/en/latest/>`_
