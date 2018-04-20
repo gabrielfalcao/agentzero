@@ -9,6 +9,7 @@ env:
   - TEST_TYPE=functional
 
 install:
+  - pip install pipenv
   - pip install -r development.txt
 
 script:
