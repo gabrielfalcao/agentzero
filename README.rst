@@ -12,6 +12,8 @@ AgentZero 0.3.3 - high-level ZeroMQ socket managers
 
 **Supports Python 2.7 and 3.6**
 
+Looking for `documentation <https://agentzero.readthedocs.io/en/latest/>`_ ?
+
 --------------------------------------------------------------------------------------
 
 What is AgentZero ?
@@ -22,6 +24,7 @@ connect, bind, and modify ZeroMQ sockets in runtime with ease.
 
 It works great with gevent, making it possible to create network
 applications with simple code that performs complex operations.
+
 
 Features:
 ---------
@@ -43,7 +46,7 @@ Installing
     pip install agentzero
 
 
-Documentation
-=============
+Learn More
+==========
 
-`agentzero.readthedocs.io <https://agentzero.readthedocs.io/en/latest/>`_
+`API Reference <https://agentzero.readthedocs.io/en/latest/api-reference.html>`_
