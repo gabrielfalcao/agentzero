@@ -1,4 +1,4 @@
-AgentZero 0.3.3 - high-level ZeroMQ socket managers
+AgentZero 0.4.0 - high-level ZeroMQ socket managers
 ===================================================
 
 .. image:: https://readthedocs.org/projects/agentzero/badge/?version=latest
