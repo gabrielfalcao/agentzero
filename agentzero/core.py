@@ -366,12 +366,14 @@ class SocketManager(object):
 
         """
         socket = self.get_by_name(name)
+        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ''))
 
-        keep_polling = keep_polling or (lambda: socket is not None)
+        def socket_exists():
+            return self.get_by_name(name) is not None
+
+        keep_polling = keep_polling or socket_exists
         if not isinstance(keep_polling, collections.Callable):
             raise TypeError('SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean')
-
-        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ''))
 
         while keep_polling():
             topic, raw = socket.recv_multipart()

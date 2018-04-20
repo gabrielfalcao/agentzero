@@ -113,6 +113,7 @@ def test_socket_manager_register_socket():
 
     # And a socket manager with a fake socket in the pool
     manager = SocketManager(zmq, context)
+    manager.registry = {}
 
     # When I call register_socket
     result = manager.register_socket("fake-socket", "fake-polling-mechanism")
@@ -626,12 +627,12 @@ def test_socket_manager_wait_until_ready(ready, engage, time):
      "continously until the socket becomes available")
 
     # Background: time.time() is mocked tick for 3 iterations
-    time.time.side_effect = list(range(3))
+    time.time.side_effect = list(range(4))
 
     # Background: SocketManager().ready() is mocked to return a socket
     # only after the second iteration
     socket = Mock(name='socket-ready-to-go')
-    ready.side_effect = [None, socket]
+    ready.side_effect = [None, socket, None]
 
     # Given a zmq mock
     zmq = Mock()
@@ -877,7 +878,9 @@ def test_socket_manager_subscribe(get_by_name):
     ("SocketManager().subscribe() should yield the topic and yield an Event")
 
     # Background: wait_until_ready is mocked to return the socket
-    socket = get_by_name.return_value
+    socket = Mock(name='<socket(name="foobar")>')
+    get_by_name.side_effect = [socket, socket, socket, socket, socket, None]
+
     socket.recv_multipart.side_effect = [
         ['metrics:whatevs', 'the-data'],
         ['action', 'test'],
@@ -899,9 +902,10 @@ def test_socket_manager_subscribe(get_by_name):
     socket = manager.create('foobar', zmq.REP)
 
     # When I perform one iteration in the subscriber
-    event1 = next(manager.subscribe('foobar'))
+    events = list(manager.subscribe('foobar'))
+    events.should.have.length_of(2)
+    event1, event2 = events
     topic1, payload1 = event1.topic, event1.data
-    event2 = next(manager.subscribe('foobar'))
 
     # Then it should have unpacked the payload after receiving
     serializer.unpack.assert_has_calls([
@@ -943,7 +947,7 @@ def test_socket_manager_subscribe_invalid_callable(get_by_name):
     socket = manager.create('foobar', zmq.REP)
 
     # When I perform one iteration in the subscriber
-    when_called = next.when.called_with(manager.subscribe('foobar', keep_polling='not a callable'))
+    when_called = list.when.called_with(manager.subscribe('foobar', keep_polling='not a callable'))
     when_called.should.have.raised(TypeError, 'SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean')
 
 
@@ -1183,6 +1187,7 @@ def test_socket_close_no_socket(get_by_name):
 def test_socket_disconnect(get_by_name, register_socket, engage):
     ("SocketManager().disconnect() should get by name, unregister then "
      "disconnect to the given address.")
+    socket = get_by_name.return_value
 
     # Given a zmq mock
     zmq = Mock()
@@ -1207,6 +1212,10 @@ def test_socket_disconnect(get_by_name, register_socket, engage):
     manager.addresses.should.equal({
         'another': 'socket',
     })
+    socket.disconnect.assert_has_calls([
+        call('baz'),
+    ])
+    socket.disconnect.call_count.should.equal(1)
 
 
 @patch('agentzero.core.SocketManager.engage')
@@ -1214,6 +1223,34 @@ def test_socket_disconnect(get_by_name, register_socket, engage):
 @patch('agentzero.core.SocketManager.get_by_name')
 def test_socket_disconnect_not_registered(get_by_name, register_socket, engage):
     ("SocketManager().disconnect() should return False if no sockets are registered with that name")
+    # Background: get_by_name returns None
+    socket = get_by_name.return_value
+
+    # Given a zmq mock
+    zmq = Mock()
+
+    # And a context
+    context = Mock()
+
+    # And a socket manager without registered sockets
+    manager = SocketManager(zmq, context)
+    manager.addresses = {
+    }
+    # When I call disconnect
+    result = manager.disconnect('foobar')
+
+    # Then it should return true
+    result.should.be.true
+
+    # But socket.disconnect
+    socket.disconnect.call_count.should.equal(0)
+
+
+@patch('agentzero.core.SocketManager.engage')
+@patch('agentzero.core.SocketManager.register_socket')
+@patch('agentzero.core.SocketManager.get_by_name')
+def test_socket_disconnect_not_available(get_by_name, register_socket, engage):
+    ("SocketManager().disconnect() should return False if no sockets are available with that name")
     # Background: get_by_name returns None
     get_by_name.return_value = None
 
@@ -1223,7 +1260,6 @@ def test_socket_disconnect_not_registered(get_by_name, register_socket, engage):
     # And a context
     context = Mock()
 
-    # And a socket manager without registered sockets
     manager = SocketManager(zmq, context)
     # When I call disconnect
     result = manager.disconnect('foobar')
