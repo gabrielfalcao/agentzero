@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from six import text_type
 from zmq.utils import jsonapi as json
 
 
@@ -31,7 +32,7 @@ class JSON(BaseSerializer):
     """Serializes to and from json"""
 
     def pack(self, item):
-        return str(json.dumps(item, default=str), 'utf-8')
+        return text_type(json.dumps(item, default=text_type), 'utf-8')
 
     def unpack(self, item):
         return json.loads(item)
