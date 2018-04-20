@@ -47,7 +47,7 @@ clean:
 	git clean -Xdf
 
 unit:
-	@pipenv run nosetests --cover-package=agentzero \
+	@pipenv run nosetests --cover-erase --cover-package=agentzero \
 	    tests/unit
 
 
