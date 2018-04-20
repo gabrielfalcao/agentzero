@@ -4,10 +4,6 @@ python:
   - "2.7"
   - "3.6"
 
-matrix:
-  allow_failures:
-    - python: "3.5"
-
 env:
   - TEST_TYPE=unit
   - TEST_TYPE=functional

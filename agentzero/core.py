@@ -803,7 +803,7 @@ class ZMQPubHandler(logging.Handler):
     }
 
     def __init__(self, socket_manager, socket_name='logs', topic_name='logs'):
-        logging.Handler.__init__(self)
+        super(ZMQPubHandler, self).__init__()
 
         self.sockets = socket_manager
         self.socket_name = socket_name
