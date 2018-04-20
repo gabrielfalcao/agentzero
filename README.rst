@@ -6,12 +6,12 @@ AgentZero 0.3.3 - high-level ZeroMQ socket managers
 
 .. image:: https://travis-ci.org/gabrielfalcao/agentzero.svg?branch=master
    :target: https://travis-ci.org/gabrielfalcao/agentzero
-   
+
 .. image:: https://codecov.io/gh/gabrielfalcao/agentzero/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/gabrielfalcao/agentzero
 
 
-AgentZero lets you create, connect, bind, and modify zeromq sockets in
+AgentZero is a pluripotent networking library that lets you create, connect, bind, and modify ZeroMQ sockets in
 runtime with ease.
 
 It works great with gevent, making it possible to create network

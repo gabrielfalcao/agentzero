@@ -132,7 +132,7 @@ def test_socket_manager_publish_safe_not_ready():
 
 
 def test_socket_manager_subscribe():
-    ("SocketManager.subscribe should subscribe from a topic")
+    ("SocketManager.subscribe should subscribe to a topic")
 
     # Given a manager
     manager = SocketManager(zmq, context)
@@ -146,5 +146,5 @@ def test_socket_manager_subscribe():
 
     # Then it should have received
     event = next(manager.subscribe('bar'))
-    event.topic.should.equal('some-topic')
+    event.topic.should.equal(b'some-topic')
     event.data.should.equal({'some': 'value'})

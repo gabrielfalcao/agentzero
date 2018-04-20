@@ -21,3 +21,4 @@ supervisord.pid
 .idea
 dist/*.gz
 docs/build
+tasks.md

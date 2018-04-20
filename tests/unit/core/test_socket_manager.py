@@ -3,12 +3,15 @@
 from mock import Mock, patch, call
 from collections import OrderedDict
 from zmq.error import ZMQError
+from zmq.utils.strtypes import cast_bytes
 from agentzero.core import SocketManager
 from agentzero.core import Event
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
+from tests.helpers import only_py2
+from tests.helpers import only_py3
 
 
 def test_socket_manager_init():
@@ -623,7 +626,7 @@ def test_socket_manager_wait_until_ready(ready, engage, time):
      "continously until the socket becomes available")
 
     # Background: time.time() is mocked tick for 3 iterations
-    time.time.side_effect = range(3)
+    time.time.side_effect = list(range(3))
 
     # Background: SocketManager().ready() is mocked to return a socket
     # only after the second iteration
@@ -688,7 +691,7 @@ def test_socket_engage():
     result.should.be.an(OrderedDict)
 
     # And the result should contain the returned items from polling
-    result.items().should.equal([("foobar", "whatevs"), ("silly-walks", "whatevs")])
+    list(result.items()).should.equal([("foobar", "whatevs"), ("silly-walks", "whatevs")])
 
 
 @patch('agentzero.core.SocketManager.wait_until_ready')
@@ -830,7 +833,7 @@ def test_socket_manager_publish_safe():
 
     # And a serializer
     serializer = Mock(name='serializer')
-
+    serializer.pack.side_effect = lambda x: '<pac({})ked>'.format(repr(x))
     # And a socket manager
     manager = SocketManager(zmq, context, serialization_backend=serializer)
 
@@ -842,9 +845,9 @@ def test_socket_manager_publish_safe():
 
     # Then it should have packed the payload before sending
     serializer.pack.assert_called_once_with('PAYLOAD')
-    packed = serializer.pack.return_value
+    serializer.pack.return_value = 'packed'
 
-    socket.send_multipart.assert_called_once_with(['topic', packed])
+    socket.send_multipart.assert_called_once_with([cast_bytes('topic'), cast_bytes("<pac('PAYLOAD')ked>")])
 
 
 def test_get_log_handler():
@@ -973,9 +976,10 @@ def test_socket_manager_recv_event_safe_missing_socket(wait_until_ready, set_top
     result.should.be.none
 
 
+@only_py2
 @patch('agentzero.core.SocketManager.set_topic')
 @patch('agentzero.core.SocketManager.wait_until_ready')
-def test_socket_manager_recv_event_safe_no_topic(wait_until_ready, set_topic):
+def test_socket_manager_recv_event_safe_no_topic_py2(wait_until_ready, set_topic):
     ("SocketManager().recv_event_safe() should raise an exeption when the topic is not a string")
 
     # Background: wait_until_ready is mocked to return the socket
@@ -1009,6 +1013,43 @@ def test_socket_manager_recv_event_safe_no_topic(wait_until_ready, set_topic):
     )
 
 
+@only_py3
+@patch('agentzero.core.SocketManager.set_topic')
+@patch('agentzero.core.SocketManager.wait_until_ready')
+def test_socket_manager_recv_event_safe_no_topic_py3(wait_until_ready, set_topic):
+    ("SocketManager().recv_event_safe() should raise an exeption when the topic is not a string")
+
+    # Background: wait_until_ready is mocked to return the socket
+    wait_until_ready.side_effect = lambda name, *args: manager.sockets[name]
+
+    # Given a zmq mock
+    zmq = Mock()
+
+    # And a context
+    context = Mock()
+
+    # And a serializer
+    serializer = Mock(name='serializer')
+
+    # And a socket manager
+    manager = SocketManager(zmq, context, serialization_backend=serializer)
+
+    # And a socket
+    socket = manager.create('foobar', zmq.REP)
+    socket.recv_multipart.return_value = b'a fake topic', 'the-raw-payload'
+
+    # When I call .recv_event_safe()
+    when_called = manager.recv_event_safe.when.called_with('foobar', topic={'boom'})
+
+    # Then it should have raised and exception
+    when_called.should.have.raised(
+        TypeError,
+        "recv_event_safe() takes a string, None "
+        "or False as argument, received "
+        "{'boom'}(<class 'set'>) instead"
+    )
+
+
 @patch('agentzero.core.SocketManager.get_by_name')
 def test_socket_manager_set_topic(get_by_name):
     ("SocketManager().set_topic() should retrieve the socket by "
@@ -1038,7 +1079,7 @@ def test_socket_manager_set_topic(get_by_name):
     # And the topic should have been set in that socket
     socket.setsockopt.assert_called_once_with(
         zmq.SUBSCRIBE,
-        b'the-topic-name'
+        b'the-topic-name',
     )
 
 

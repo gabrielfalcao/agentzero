@@ -25,12 +25,12 @@ def get_free_tcp_port():
 
 
 def get_default_bind_address():
-    return ':'.join([get_hostname(), bytes(get_free_tcp_port())])
+    return ':'.join([get_hostname(), str(get_free_tcp_port())])
 
 
 def get_hostname():
     hostname = socket.gethostname()
-    return hostname
+    return str(hostname)
 
 
 def get_public_ip_address(hostname=None):
@@ -40,7 +40,7 @@ def get_public_ip_address(hostname=None):
 
 
 def extract_hostname_from_tcp_address(address):
-    if not isinstance(address, basestring):
+    if not isinstance(address, str):
         return
 
     found = re.search(r'^tcp://([^:]+):(\d+)', address)
@@ -86,7 +86,7 @@ def datetime_from_seconds(timestamp):
 def serialized_exception(e):
     exc_type = type(e)
     return {
-        'module': bytes(exc_type.__module__),
-        'name': bytes(exc_type.__name__),
+        'module': str(exc_type.__module__),
+        'name': str(exc_type.__name__),
         'traceback': traceback.format_exc(e)
     }

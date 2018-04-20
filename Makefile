@@ -47,13 +47,15 @@ clean:
 	git clean -Xdf
 
 unit:
-	nosetests -x --with-randomly --with-coverage --cover-erase --cover-package=agentzero --verbosity=2 -s --rednose tests/unit
+	@nosetests --cover-package=agentzero \
+	    tests/unit
+
 
 functional:
-	nosetests -x  --with-randomly --with-coverage --cover-erase \
+	@nosetests \
 	    --cover-package=agentzero.core \
 	    --cover-package=agentzero.serializers \
-	    --verbosity=2 -s --rednose tests/functional
+	    tests/functional
 
 
 
@@ -69,7 +71,7 @@ ensure-dependencies:
 	@CFLAGS='-std=c99' pip install -r development.txt
 
 release: tests
-	@./.release
+	# @./.release
 	@rm -rf dist
 	@python setup.py sdist
 	@twine upload dist/*.tar.gz

@@ -24,8 +24,8 @@ def test_emit():
     logger.info("hello world %s", 'baz')
 
     # Then it should have published
-    sockets.publish_safe.assert_called_once_with('foo', 'important', {
-        'msg': '[2016-02-25T19:00:00Z] INFO test_logging.py:24 - hello world baz\n',
+    sockets.publish_safe.assert_called_once_with('foo', b'important', {
+        'msg': b'[2016-02-25T19:00:00Z] INFO test_logging.py:24 - hello world baz\n',
         'args': ('baz', ),
         'level': 20
     })

@@ -31,7 +31,7 @@ class JSON(BaseSerializer):
     """Serializes to and from json"""
 
     def pack(self, item):
-        return json.dumps(item, encoding='utf-8', default=repr)
+        return str(json.dumps(item, default=str), 'utf-8')
 
     def unpack(self, item):
         return json.loads(item)
