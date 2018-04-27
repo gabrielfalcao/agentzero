@@ -104,7 +104,7 @@ class SocketManager(object):
         for socket in list(self.sockets.values()):
             try:
                 socket.close()
-            except:
+            except (Exception, BaseException):
                 pass
         self.addresses.clear()
         self.registry.clear()
@@ -259,7 +259,7 @@ class SocketManager(object):
         """
 
         socket = self.get_by_name(name)
-        socket.setsockopt(option, cast_bytes(value))
+        socket.setsockopt(option, value)
 
     def set_topic(self, name, topic):
         """shortcut to :py:meth:SocketManager.set_socket_option(zmq.TOPIC, topic)
@@ -284,7 +284,7 @@ class SocketManager(object):
           'logs:2016-06-20', {'stdout': 'hello world'}
         """
 
-        safe_topic = cast_string(topic)
+        safe_topic = cast_bytes(topic)
         self.set_socket_option(name, self.zmq.SUBSCRIBE, safe_topic)
 
     def recv_safe(self, name, *args, **kw):
