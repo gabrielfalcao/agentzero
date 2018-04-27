@@ -19,6 +19,7 @@ coverage = "*"
 rednose = "*"
 sure = "*"
 freezegun = "*"
+twine = "*"
 
 
 [requires]
