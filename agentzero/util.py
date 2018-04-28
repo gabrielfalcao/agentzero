@@ -4,7 +4,8 @@ import re
 import time
 import socket
 import traceback
-from six import text_type, string_types, binary_type
+from six import text_type
+from six import string_types
 from datetime import datetime
 from zmq.utils.strtypes import cast_bytes as _cast_bytes
 

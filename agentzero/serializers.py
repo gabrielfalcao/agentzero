@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import msgpack
-from six import binary_type
 from six import text_type
 from zmq.utils import jsonapi as json
 

@@ -24,7 +24,7 @@ from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
-
+from agentzero.util import cast_bytes
 
 DEFAULT_TIMEOUT_IN_SECONDS = 10
 
