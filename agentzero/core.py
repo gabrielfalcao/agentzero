@@ -24,7 +24,6 @@ from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
-from agentzero.util import cast_bytes, cast_string
 
 
 DEFAULT_TIMEOUT_IN_SECONDS = 10
@@ -49,6 +48,8 @@ class SocketManager(object):
         optional safe for the cases where you utilize the methods
         ``send_safe`` and ``recv_safe`` when communicating to other
         nodes.
+    :param polling_timeout: a **float** - how long to wait for the socket to become available, in miliseconds
+    :param timeout: default value passed to :py:meth:`~agentzero.core.SocketManager.engage`
 
     .. note:: An extra useful feature that comes with using a
       ``SocketManager`` is that you can use a SocketManager to create an
@@ -254,7 +255,7 @@ class SocketManager(object):
         socket.setsockopt(option, value)
 
     def set_topic(self, name, topic):
-        """shortcut to :py:meth:SocketManager.set_socket_option(zmq.TOPIC, topic)
+        """shortcut to :py:meth:`SocketManager.set_socket_option` with ``(name, zmq.SUBSCRIBE, topic)``
 
         :param name: the name of the socket where data will pad through
         :param topic: the option from the ``zmq`` module
@@ -728,9 +729,9 @@ class SocketManager(object):
         return collections.OrderedDict(self.poller.poll(polling_timeout))
 
     def get_log_handler(self, socket_name, topic_name='logs'):
-        """returns an instance of :py:class:ZMQPubHandler attached to a previously-created socket.
+        """returns an instance of :py:class:`~zmq.ZMQPubHandler` attached to a previously-created socket.
 
-        :param socket_name: the name of the socket, previously created with :py:meth:SocketManager.create
+        :param socket_name: the name of the socket, previously created with :py:meth:`SocketManager.create`
         :param topic_name: the name of the topic in which the logs will be PUBlished
 
         **Example:**
@@ -753,10 +754,10 @@ class SocketManager(object):
         return ZMQPubHandler(self, socket_name, topic_name)
 
     def get_logger(self, socket_name, topic_name='logs', logger_name=None):
-        """returns an instance of :py:class:logging.Logger that contains a
-        :py:class:ZMQPubHandler attached to.
+        """returns an instance of :py:class:`~logging.Logger` that contains a
+        :py:class:`~zmq.ZMQPubHandler` attached to.
 
-        :param socket_name: the name of the socket, previously created with :py:meth:SocketManager.create
+        :param socket_name: the name of the socket, previously created with :py:meth:`~agentzero.core.SocketManager.create`
         :param topic_name: (optional) the name of the topic in which the logs will be PUBlished, defaults to **"logs"**
         :param logger_name: (optional) defaults to the given socket name
 

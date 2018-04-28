@@ -22,6 +22,9 @@ sure = "*"
 freezegun = "*"
 twine = "*"
 ipdb = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+"pathlib2" = "*"
 
 
 [requires]

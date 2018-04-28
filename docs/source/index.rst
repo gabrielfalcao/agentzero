@@ -32,4 +32,5 @@ Table of Contents:
    :maxdepth: 3
 
    api-reference
+   code-of-conduct
    examples/workers/guide.rst
