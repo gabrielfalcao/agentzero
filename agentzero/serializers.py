@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import msgpack
+from six import binary_type
 from six import text_type
 from zmq.utils import jsonapi as json
 
@@ -29,10 +31,23 @@ class BaseSerializer(object):  # pragma: no cover
 
 
 class JSON(BaseSerializer):
-    """Serializes to and from json"""
+    """Serializes to and from :py:mod:`json`"""
 
     def pack(self, item):
-        return text_type(json.dumps(item, default=text_type), 'utf-8')
+        return json.dumps(item, default=text_type).decode('utf-8')
 
     def unpack(self, item):
+        if isinstance(item, text_type):
+            item = item.encode('utf-8')
+
         return json.loads(item)
+
+
+class MSGPACK(BaseSerializer):
+    """Serializes to and from :py:mod:`msgpack`"""
+
+    def pack(self, item):
+        return msgpack.packb(item, default=text_type, use_bin_type=True)
+
+    def unpack(self, item):
+        return msgpack.unpackb(item)

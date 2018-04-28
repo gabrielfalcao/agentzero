@@ -10,6 +10,7 @@ name = "pypi"
 pyzmq = "==16.0.2"
 gevent = "==1.2.2"
 six = "*"
+msgpack = "*"
 
 
 [dev-packages]
@@ -20,6 +21,7 @@ rednose = "*"
 sure = "*"
 freezegun = "*"
 twine = "*"
+ipdb = "*"
 
 
 [requires]

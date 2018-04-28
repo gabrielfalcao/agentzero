@@ -4,14 +4,29 @@ import re
 import time
 import socket
 import traceback
+from six import text_type, string_types, binary_type
 from datetime import datetime
+from zmq.utils.strtypes import cast_bytes as _cast_bytes
 
 
 __all__ = [
+    'cast_bytes',
+    'cast_string',
     'serialized_exception',
     'seconds_since',
     'get_free_tcp_port',
 ]
+
+
+def cast_bytes(s):
+    return _cast_bytes(text_type(s))
+
+
+def cast_string(s):
+    if not isinstance(s, string_types):
+        return text_type(s)
+
+    return s.encode('utf-8')
 
 
 def get_free_tcp_port():

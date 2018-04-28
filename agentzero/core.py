@@ -18,21 +18,13 @@ import collections
 from uuid import uuid4
 
 from zmq.error import ZMQError
-from zmq.utils.strtypes import cast_bytes as _cast_bytes
 
 from agentzero import serializers
 from agentzero.errors import SocketNotFound
 from agentzero.errors import SocketAlreadyExists
 from agentzero.errors import SocketBindError
 from agentzero.errors import SocketConnectError
-
-
-def cast_bytes(s):
-    return _cast_bytes(str(s))
-
-
-def cast_string(s):
-    return str(s)
+from agentzero.util import cast_bytes, cast_string
 
 
 DEFAULT_TIMEOUT_IN_SECONDS = 10
@@ -481,7 +473,11 @@ class SocketManager(object):
         if not socket:
             return
 
-        self.poller.unregister(socket)
+        try:
+            self.poller.unregister(socket)
+        except KeyError:
+            pass
+
         self.addresses.pop(socket_name, None)
         socket.close()
 
@@ -555,7 +551,7 @@ class SocketManager(object):
 
         port = socket.bind_to_random_port(local_address)
 
-        address = ':'.join(map(cast_string, [local_address, cast_string(port)]))
+        address = ':'.join(list(map(str, [local_address, port])))
 
         self.addresses[socket_name] = address
 
