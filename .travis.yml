@@ -6,9 +6,9 @@ python:
 
 install:
   - pip install pipenv
-  - pipenv install --dev
 
 script:
+  - pipenv install --dev --skip-lock
   - make unit functional
 
 after_success:

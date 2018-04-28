@@ -22,6 +22,7 @@ AGENTZERO_API_ADDRESS		:=
 AGENTZERO_PUBLISHER_ADDRESS	:=
 PATH				:= $(PATH):$(shell pwd)
 executable			:= pipenv run python -m agentzero.console.main
+PIPENV_IGNORE_VIRTUALENVS	:= 1
 export TZ
 export PATH
 export PYTHONPATH
@@ -31,6 +32,7 @@ export DEBIAN_FRONTEND
 export PYTHONUNBUFFERED
 export AGENTZERO_API_ADDRESS
 export AGENTZERO_PUBLISHER_ADDRESS
+export PIPENV_IGNORE_VIRTUALENVS
 
 tests: lint unit functional
 
