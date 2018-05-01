@@ -10,6 +10,9 @@ AgentZero 0.4.3 - high-level ZeroMQ socket managers
 .. image:: https://codecov.io/gh/gabrielfalcao/agentzero/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/gabrielfalcao/agentzero
 
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+   :target: https://saythanks.io/to/gabrielfalcao
+
 **Supports Python 2.7 and 3.6**
 
 Looking for `documentation <https://agentzero.readthedocs.io/en/latest/>`_ ?

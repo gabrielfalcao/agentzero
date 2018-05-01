@@ -60,20 +60,22 @@ class SocketManager(object):
       using gevent, please using a single instance for your whole main
       process, across all greenlets that you manage.
 
-    >>> import zmq
-    >>> from agentzero.core import SocketManager
-    >>> from agentzero.serializers import JSON
-    >>>
-    >>> context = zmq.Context()
-    >>>
-    >>> sockets = SocketManager(zmq, context, serialization_backend=JSON())
-    >>> sockets.ensure_and_connect(
-    ...      "requester",
-    ...      zmq.REQ,
-    ...      'tcp://192.168.2.42:5051',
-    ...      zmq.POLLIN | zmq.POLLOUT
-    ... )
-    <zmq.green.core._Socket at ...>
+    .. testcode::
+
+       import zmq
+       from agentzero.core import SocketManager
+       from agentzero.serializers import JSON
+
+       context = zmq.Context()
+
+       sockets = SocketManager(zmq, context, serialization_backend=JSON())
+       sockets.ensure_and_connect(
+            "requester",
+            zmq.REQ,
+            'tcp://192.168.2.42:5051',
+            zmq.POLLIN | zmq.POLLOUT
+       )
+
     """
 
     def __init__(self, zmq, context, serialization_backend=None, polling_timeout=DEFAULT_POLLING_TIMEOUT, timeout=DEFAULT_TIMEOUT_IN_SECONDS):
@@ -337,9 +339,13 @@ class SocketManager(object):
 
         returns an :py:class`~agentzero.core.Event`, or ``None`` if the socket never became available
 
-        :param name:  the name of the socket where data will pad through
+        :param name: :py:class:`str` - the name of the socket where data will pad through
+        :param topic: :py:class:`str` - the name of the socket where data will pad through
+        :param keep_polling:  *(optional)* - a callable that must return :py:class:`bool`
         :param ``*args``: args to be passed to wait_until_ready
         :param ``**kw``: kwargs to be passed to wait_until_ready
+
+        .. tip:: pass a function to the **keep_polling** to control the finality of the loop
 
         **Example:**
 
@@ -562,8 +568,10 @@ class SocketManager(object):
         """Ensure that a socket exists, that is *connected* to the given address
         and that is registered with the given polling mechanism.
 
-        This method is a handy replacement for calling
-        ``.get_or_create()``, ``.connect()`` and then ``.engage()``.
+        .. tip:: This method is a handy replacement for calling
+                 :py:meth:`~agentzero.core.SocketManager.get_or_create`,
+                 :py:meth:`~agentzero.core.SocketManager.connect` and then
+                 :py:meth:`~agentzero.core.SocketManager.engage`.
 
         returns the socket itself.
 
@@ -596,8 +604,10 @@ class SocketManager(object):
         """Ensure that a socket exists, that is *binded* to the given address
         and that is registered with the given polling mechanism.
 
-        This method is a handy replacement for calling
-        ``.get_or_create()``, ``.bind()`` and then ``.engage()``.
+        .. tip:: This method is a handy replacement for calling
+                 :py:meth:`~agentzero.core.SocketManager.get_or_create`,
+                 :py:meth:`~agentzero.core.SocketManager.bind` and then
+                 :py:meth:`~agentzero.core.SocketManager.engage`.
 
         returns the socket itself.
 
@@ -605,6 +615,7 @@ class SocketManager(object):
         :param socket_type: a valid socket type (i.e: ``zmq.REQ``, ``zmq.PUB``, ``zmq.PAIR``, ...)
         :param address: a valid zeromq address (i.e: inproc://whatevs)
         :param polling_mechanism: ``zmq.POLLIN``, ``zmq.POLLOUT`` or ``zmq.POLLIN | zmq.POLLOUT``
+
         """
         self.get_or_create(socket_name, socket_type, polling_mechanism)
         socket = self.bind(socket_name, address, polling_mechanism)
@@ -693,6 +704,22 @@ class SocketManager(object):
         :param name: the socket name
         :param socket_type: a valid socket type (i.e: ``zmq.REQ``, ``zmq.PUB``, ``zmq.PAIR``, ...)
         :param polling_mechanism: one of (``zmq.POLLIN``, ``zmq.POLLOUT``, ``zmq.POLLIN | zmq.POLLOUT``)
+
+
+        .. testcode::
+
+           import zmq
+           from agentzero.core import SocketManager
+           from agentzero.serializers import JSON
+
+           context = zmq.Context()
+
+           sockets = SocketManager(zmq, context, serialization_backend=JSON())
+           sockets.get_or_create(
+                "requester",
+                zmq.REQ,
+                zmq.POLLIN | zmq.POLLOUT
+           )
         """
         if name not in self.sockets:
             self.create(name, socket_type)
@@ -736,21 +763,21 @@ class SocketManager(object):
 
         **Example:**
 
-        ::
+        .. testcode::
 
-          >>> import zmq
-          >>> from agentzero.core import SocketManager
-          >>>
-          >>> sockets = SocketManager()
-          >>> sockets.ensure_and_bind('logs', zmq.PUB, 'tcp://*:6000', zmq.POLLOUT)
-          >>> app_logger = sockets.get_logger('logs', logger_name='myapp'))
-          >>> app_logger.info("Server is up!")
-          >>> try:
-                  url = sockets.recv_safe('download_queue')
-          ...     requests.get(url)
-          ... except:
-          ...     app_logger.exception('failed to download url: %s', url)
-        """
+           import logging
+           import zmq.green as zmq
+           from agentzero.core import SocketManager
+
+           context = zmq.Context()
+           sockets = SocketManager(zmq, context)
+
+           handler = sockets.get_log_handler('logs', topic_name='app_logs')
+           logger = logging.getLogger()
+           logger.addHandler(handler)
+
+           logger.info("Server is up!")
+         """
         return ZMQPubHandler(self, socket_name, topic_name)
 
     def get_logger(self, socket_name, topic_name='logs', logger_name=None):
@@ -763,21 +790,18 @@ class SocketManager(object):
 
         **Example:**
 
-        ::
+        .. testcode::
 
-          >>> import zmq
-          >>> from agentzero.core import SocketManager
-          >>>
-          >>> sockets = SocketManager()
-          >>> sockets.ensure_and_bind('logs', zmq.PUB, 'tcp://*:6000', zmq.POLLOUT)
-          >>> app_logger = sockets.get_logger('logs', logger_name='myapp'))
-          >>> app_logger.info("Server is up!")
-          >>> try:
-                  url = sockets.recv_safe('download_queue')
-          ...     requests.get(url)
-          ... except:
-          ...     app_logger.exception('failed to download url: %s', url)
-        """
+           import logging
+           import zmq.green as zmq
+           from agentzero.core import SocketManager
+
+           context = zmq.Context()
+           sockets = SocketManager(zmq, context)
+
+           logger = sockets.get_logger('logs', topic_name='logs', logger_name=__name__)
+           logger.info("Server is up!")
+         """
         logger_name = logger_name or socket_name
         handler = self.get_log_handler(socket_name, topic_name)
         logger = logging.getLogger(logger_name)
