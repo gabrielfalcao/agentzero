@@ -78,7 +78,14 @@ class SocketManager(object):
 
     """
 
-    def __init__(self, zmq, context, serialization_backend=None, polling_timeout=DEFAULT_POLLING_TIMEOUT, timeout=DEFAULT_TIMEOUT_IN_SECONDS):
+    def __init__(
+        self,
+        zmq,
+        context,
+        serialization_backend=None,
+        polling_timeout=DEFAULT_POLLING_TIMEOUT,
+        timeout=DEFAULT_TIMEOUT_IN_SECONDS,
+    ):
         self.zmq = zmq
         self.context = context
         # book-keeping of the the sockets themselves
@@ -93,7 +100,9 @@ class SocketManager(object):
         self.timeout = timeout
 
     def __repr__(self):
-        return 'SocketManager(sockets={0})'.format(repr(list(self.sockets.keys())))
+        return "SocketManager(sockets={0})".format(
+            repr(list(self.sockets.keys()))
+        )
 
     def __del__(self):
         for socket in list(self.sockets.values()):
@@ -132,7 +141,7 @@ class SocketManager(object):
             return False
 
         payload = self.serialization_backend.pack(data)
-        socket.send(payload)
+        socket.send_string(payload)
 
         return True
 
@@ -195,16 +204,13 @@ class SocketManager(object):
           >>> event.topic, event.data
           'logs:2016-06-20', {'stdout': 'hello world'}
         """
-        topic = topic or ''
+        topic = topic or ""
 
         if not isinstance(topic, bytes):
             msg = (
-                'recv_event_safe() takes a string, '
-                'None or False as argument, '
-                'received {1}({0}) instead'.format(
-                    type(topic),
-                    topic
-                )
+                "recv_event_safe() takes a string, "
+                "None or False as argument, "
+                "received {1}({0}) instead".format(type(topic), topic)
             )
             raise TypeError(msg)
 
@@ -322,7 +328,7 @@ class SocketManager(object):
         if not socket:
             return
 
-        raw = socket.recv()
+        raw = socket.recv_string()
         payload = self.serialization_backend.unpack(raw)
         return payload
 
@@ -365,14 +371,16 @@ class SocketManager(object):
 
         """
         socket = self.get_by_name(name)
-        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ''))
+        socket.setsockopt(self.zmq.SUBSCRIBE, cast_bytes(topic or ""))
 
         def socket_exists():
             return self.get_by_name(name) is not None
 
         keep_polling = keep_polling or socket_exists
         if not isinstance(keep_polling, collections.Callable):
-            raise TypeError('SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean')
+            raise TypeError(
+                "SocketManager.subscribe parameter keep_polling must be a function or callable that returns a boolean"
+            )
 
         while keep_polling():
             topic, raw = socket.recv_multipart()
@@ -444,7 +452,11 @@ class SocketManager(object):
 
         """
         if not address:
-            raise SocketConnectError('socket "{0}" received an empty address and cannot connect'.format(socket_name))
+            raise SocketConnectError(
+                'socket "{0}" received an empty address and cannot connect'.format(
+                    socket_name
+                )
+            )
 
         self.addresses[socket_name] = address
         socket = self.get_by_name(socket_name)
@@ -453,7 +465,7 @@ class SocketManager(object):
         try:
             socket.connect(address)
         except ZMQError as e:
-            msg = 'could not connect to address {0}: {1}'.format(address, e)
+            msg = "could not connect to address {0}: {1}".format(address, e)
             raise SocketConnectError(msg)
         return socket
 
@@ -510,7 +522,11 @@ class SocketManager(object):
           >>> sockets.bind('pipe-in', 'tcp://*:6000', zmq.POLLIN)
         """
         if not address:
-            raise SocketBindError('socket "{0}" received an empty address and cannot bind'.format(socket_name))
+            raise SocketBindError(
+                'socket "{0}" received an empty address and cannot bind'.format(
+                    socket_name
+                )
+            )
 
         self.addresses[socket_name] = address
 
@@ -521,12 +537,14 @@ class SocketManager(object):
         try:
             socket.bind(address)
         except ZMQError as e:
-            msg = 'could not bind to address {0}: {1}'.format(address, e)
+            msg = "could not bind to address {0}: {1}".format(address, e)
             raise SocketBindError(msg)
 
         return socket
 
-    def bind_to_random_port(self, socket_name, polling_mechanism, local_address='tcp://0.0.0.0'):
+    def bind_to_random_port(
+        self, socket_name, polling_mechanism, local_address="tcp://0.0.0.0"
+    ):
         """binds the socket to a random port
 
         returns a 2-item tuple with the socket instance and the address string
@@ -558,13 +576,15 @@ class SocketManager(object):
 
         port = socket.bind_to_random_port(local_address)
 
-        address = ':'.join(list(map(str, [local_address, port])))
+        address = ":".join(list(map(str, [local_address, port])))
 
         self.addresses[socket_name] = address
 
         return socket, address
 
-    def ensure_and_connect(self, socket_name, socket_type, address, polling_mechanism):
+    def ensure_and_connect(
+        self, socket_name, socket_type, address, polling_mechanism
+    ):
         """Ensure that a socket exists, that is *connected* to the given address
         and that is registered with the given polling mechanism.
 
@@ -600,7 +620,9 @@ class SocketManager(object):
         self.engage()
         return socket
 
-    def ensure_and_bind(self, socket_name, socket_type, address, polling_mechanism):
+    def ensure_and_bind(
+        self, socket_name, socket_type, address, polling_mechanism
+    ):
         """Ensure that a socket exists, that is *binded* to the given address
         and that is registered with the given polling mechanism.
 
@@ -635,11 +657,15 @@ class SocketManager(object):
 
         """
         socket = self.get_by_name(name)
-        available_mechanism = self.engage(timeout is None and self.timeout or timeout).pop(socket, None)
+        available_mechanism = self.engage(
+            timeout is None and self.timeout or timeout
+        ).pop(socket, None)
         if polling_mechanism == available_mechanism:
             return socket
 
-    def wait_until_ready(self, name, polling_mechanism, timeout=None, polling_timeout=None):
+    def wait_until_ready(
+        self, name, polling_mechanism, timeout=None, polling_timeout=None
+    ):
         """Briefly waits until the socket is ready to be used, yields to other
         greenlets until the socket becomes available.
 
@@ -655,7 +681,9 @@ class SocketManager(object):
           (optional, defaults to ``core.DEFAULT_POLLING_TIMEOUT``)
         """
         timeout = timeout is None and self.timeout or timeout
-        polling_timeout = polling_timeout is None and self.polling_timeout or polling_timeout
+        polling_timeout = (
+            polling_timeout is None and self.polling_timeout or polling_timeout
+        )
         start = time.time()
         current = start
         while current - start < timeout:
@@ -755,7 +783,7 @@ class SocketManager(object):
 
         return collections.OrderedDict(self.poller.poll(polling_timeout))
 
-    def get_log_handler(self, socket_name, topic_name='logs'):
+    def get_log_handler(self, socket_name, topic_name="logs"):
         """returns an instance of :py:class:`~zmq.ZMQPubHandler` attached to a previously-created socket.
 
         :param socket_name: the name of the socket, previously created with :py:meth:`SocketManager.create`
@@ -780,7 +808,7 @@ class SocketManager(object):
          """
         return ZMQPubHandler(self, socket_name, topic_name)
 
-    def get_logger(self, socket_name, topic_name='logs', logger_name=None):
+    def get_logger(self, socket_name, topic_name="logs", logger_name=None):
         """returns an instance of :py:class:`~logging.Logger` that contains a
         :py:class:`~zmq.ZMQPubHandler` attached to.
 
@@ -812,7 +840,7 @@ class SocketManager(object):
 class ZMQPubHandler(logging.Handler):
     default_formatter = logging.Formatter(
         "[%(asctime)s] %(levelname)s %(filename)s:%(lineno)d - %(message)s\n",
-        datefmt='%Y-%m-%dT%H:%M:%SZ'
+        datefmt="%Y-%m-%dT%H:%M:%SZ",
     )
 
     formatters = {
@@ -821,12 +849,12 @@ class ZMQPubHandler(logging.Handler):
         logging.WARN: default_formatter,
         logging.ERROR: logging.Formatter(
             "[%(asctime)s] %(levelname)s %(filename)s:%(lineno)d - %(message)s - %(exc_info)s\n",
-            datefmt='%Y-%m-%dT%H:%M:%SZ'
+            datefmt="%Y-%m-%dT%H:%M:%SZ",
         ),
-        logging.CRITICAL: default_formatter
+        logging.CRITICAL: default_formatter,
     }
 
-    def __init__(self, socket_manager, socket_name='logs', topic_name='logs'):
+    def __init__(self, socket_manager, socket_name="logs", topic_name="logs"):
         super(ZMQPubHandler, self).__init__()
 
         self.sockets = socket_manager
@@ -842,7 +870,7 @@ class ZMQPubHandler(logging.Handler):
         #     self.handleError(record)
         #     # return
 
-        data = {'msg': msg, 'args': record.args, 'level': record.levelno}
+        data = {"msg": msg, "args": record.args, "level": record.levelno}
         self.sockets.publish_safe(self.socket_name, self.topic_name, data)
 
 

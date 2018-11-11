@@ -41,19 +41,31 @@ def entrypoint():
     """
 
     parser = argparse.ArgumentParser(
-        prog='agentzero (queue|pipeline|forwarder)',
-        description='master server that orchestrates minions and controller by a backend API')
+        prog="agentzero (queue|pipeline|forwarder)",
+        description="master server that orchestrates minions and controller by a backend API",
+    )
 
-    parser.add_argument('device_type', help='the type of ZMQ device to run')
-    parser.add_argument('--bind-in', help='a valid zmq address')
-    parser.add_argument('--bind-out', help='a valid zmq address')
-    parser.add_argument('--connect-in', help='a valid zmq address')
-    parser.add_argument('--connect-out', help='a valid zmq address')
-    parser.add_argument('--type-in', help='the type of zmq socket that should handle input data')
-    parser.add_argument('--type-out', help='the type of zmq socket that should handle output data')
+    parser.add_argument("device_type", help="the type of ZMQ device to run")
+    parser.add_argument("--bind-in", help="a valid zmq address")
+    parser.add_argument("--bind-out", help="a valid zmq address")
+    parser.add_argument("--connect-in", help="a valid zmq address")
+    parser.add_argument("--connect-out", help="a valid zmq address")
+    parser.add_argument(
+        "--type-in", help="the type of zmq socket that should handle input data"
+    )
+    parser.add_argument(
+        "--type-out",
+        help="the type of zmq socket that should handle output data",
+    )
 
-    parser.add_argument('--hwm-in', help='an integer representing the number of messages to buffer incoming data before either dropping messages or blocking process execution')
-    parser.add_argument('--hwm-in', help='an integer representing the number of messages to buffer outcoming data before either dropping messages or blocking process execution')
+    parser.add_argument(
+        "--hwm-in",
+        help="an integer representing the number of messages to buffer incoming data before either dropping messages or blocking process execution",
+    )
+    parser.add_argument(
+        "--hwm-in",
+        help="an integer representing the number of messages to buffer outcoming data before either dropping messages or blocking process execution",
+    )
 
     args = parser.parse_args()
 

@@ -4,4 +4,4 @@ import zmq.green as zmq
 
 context = zmq.Context()
 
-__all__ = ['zmq', 'context']
+__all__ = ["zmq", "context"]
