@@ -53,11 +53,11 @@ class SocketNotFound(AgentZeroSocketError):
 
 class SocketBindError(AgentZeroSocketError):
     """raised by :py:class:`~agentzero.core.SocketManager` when a
-    :py:method:`~agentzero.core.SocketManager.bind` operation fails.
+    :py:meth:`~agentzero.core.SocketManager.bind` operation fails.
     """
 
 
 class SocketConnectError(AgentZeroSocketError):
     """raised by :py:class:`~agentzero.core.SocketManager` when a
-    :py:method:`~agentzero.core.SocketManager.connect` operation fails.
+    :py:meth:`~agentzero.core.SocketManager.connect` operation fails.
     """

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# Copyright © 2015 Canary Connect Inc.
 
 from agentzero.version import version
 from agentzero.core import SocketManager

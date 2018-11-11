@@ -42,7 +42,7 @@ master_doc = "index"
 
 # General information about the project.
 project = u"AgentZero"
-copyright = u"2015, Gabriel Falcão"
+copyright = u"2015-2018, Gabriel Falcão"
 author = u"Gabriel Falcão"
 
 version = version
