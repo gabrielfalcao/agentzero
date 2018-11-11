@@ -10,6 +10,7 @@ class BaseSerializer(object):  # pragma: no cover
 
     all base classes must implement the methods ``pack`` and ``unpack``
     """
+
     def __init__(self, *args, **kw):
         self.initialize(*args, **kw)
 
@@ -33,11 +34,11 @@ class JSON(BaseSerializer):
     """Serializes to and from :py:mod:`json`"""
 
     def pack(self, item):
-        return json.dumps(item, default=text_type).decode('utf-8')
+        return json.dumps(item, default=text_type).decode("utf-8")
 
     def unpack(self, item):
         if isinstance(item, text_type):
-            item = item.encode('utf-8')
+            item = item.encode("utf-8")
 
         return json.loads(item)
 

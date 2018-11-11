@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 class AgentZeroSocketError(BaseException):
     """Base exception class for errors originated in :py:class:`~agentzero.core.SocketManager`"""
+
     pass
 
 
@@ -23,8 +24,11 @@ class SocketAlreadyExists(AgentZeroSocketError):
           ...
       SocketAlreadyExists: SocketManager(sockets=['foo']) already has a socket named 'foo'.
     """
+
     def __init__(self, manager, socket_name):
-        msg = '{0} already has a socket named {1}.'.format(manager, repr(socket_name))
+        msg = "{0} already has a socket named {1}.".format(
+            manager, repr(socket_name)
+        )
         super(SocketAlreadyExists, self).__init__(msg)
 
 
@@ -41,8 +45,9 @@ class SocketNotFound(AgentZeroSocketError):
           ...
       SocketNotFound: SocketManager(sockets=['']) has no sockets named 'some-name'.
     """
+
     def __init__(self, manager, socket_name):
-        msg = '{0} has no sockets named {1}.'.format(manager, repr(socket_name))
+        msg = "{0} has no sockets named {1}.".format(manager, repr(socket_name))
         super(SocketNotFound, self).__init__(msg)
 
 

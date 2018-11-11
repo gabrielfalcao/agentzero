@@ -11,11 +11,11 @@ from zmq.utils.strtypes import cast_bytes as _cast_bytes
 
 
 __all__ = [
-    'cast_bytes',
-    'cast_string',
-    'serialized_exception',
-    'seconds_since',
-    'get_free_tcp_port',
+    "cast_bytes",
+    "cast_string",
+    "serialized_exception",
+    "seconds_since",
+    "get_free_tcp_port",
 ]
 
 
@@ -27,21 +27,21 @@ def cast_string(s):
     if not isinstance(s, string_types):
         return text_type(s)
 
-    return s.encode('utf-8')
+    return s.encode("utf-8")
 
 
 def get_free_tcp_port():
     """returns a TCP port that can be used for listen in the host.
     """
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp.bind(('', 0))
+    tcp.bind(("", 0))
     host, port = tcp.getsockname()
     tcp.close()
     return port
 
 
 def get_default_bind_address():
-    return ':'.join([get_hostname(), str(get_free_tcp_port())])
+    return ":".join([get_hostname(), str(get_free_tcp_port())])
 
 
 def get_hostname():
@@ -59,7 +59,7 @@ def extract_hostname_from_tcp_address(address):
     if not isinstance(address, str):
         return
 
-    found = re.search(r'^tcp://([^:]+):(\d+)', address)
+    found = re.search(r"^tcp://([^:]+):(\d+)", address)
     if found:
         return found.group(1)
 
@@ -74,20 +74,20 @@ def resolve_hostname(hostname):
 
 
 def fix_zeromq_tcp_address(address):
-    address = address or ''
+    address = address or ""
     hostname = resolve_hostname(extract_hostname_from_tcp_address(address))
 
     if not hostname:
         return address
 
-    regex = r'^tcp://([^:]+)'
-    replacement = 'tcp://{0}'.format(hostname)
+    regex = r"^tcp://([^:]+)"
+    replacement = "tcp://{0}".format(hostname)
     return re.sub(regex, replacement, address)
 
 
 def get_public_zmq_address():
     hostport = get_default_bind_address()
-    address = 'tcp://{0}'.format(hostport)
+    address = "tcp://{0}".format(hostport)
     return fix_zeromq_tcp_address(address)
 
 
@@ -102,7 +102,7 @@ def datetime_from_seconds(timestamp):
 def serialized_exception(e):
     exc_type = type(e)
     return {
-        'module': str(exc_type.__module__),
-        'name': str(exc_type.__name__),
-        'traceback': traceback.format_exc(e)
+        "module": str(exc_type.__module__),
+        "name": str(exc_type.__name__),
+        "traceback": traceback.format_exc(e),
     }

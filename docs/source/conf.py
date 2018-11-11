@@ -16,7 +16,7 @@ import os
 import sys
 import sphinx_rtd_theme
 
-project_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..')
+project_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../..")
 
 sys.path.insert(0, project_path)
 
@@ -24,26 +24,26 @@ from agentzero.version import version  # noqa
 
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.viewcode",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 autosummary_generate = True
-source_suffix = '.rst'
-master_doc = 'index'
+source_suffix = ".rst"
+master_doc = "index"
 
 # General information about the project.
-project = u'AgentZero'
-copyright = u'2015, Gabriel Falcão'
-author = u'Gabriel Falcão'
+project = u"AgentZero"
+copyright = u"2015, Gabriel Falcão"
+author = u"Gabriel Falcão"
 
 version = version
 release = version
@@ -55,42 +55,48 @@ exclude_patterns = []
 add_function_parentheses = True
 
 add_module_names = True
-pygments_style = 'friendly'
+pygments_style = "friendly"
 
 todo_include_todos = True
 
 
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_static_path = ['_static']
-htmlhelp_basename = 'AgentZerodoc'
+html_static_path = ["_static"]
+htmlhelp_basename = "AgentZerodoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
-}
+latex_elements = {}
 
 latex_documents = [
-    (master_doc, 'AgentZero.tex', u'AgentZero Documentation',
-     u'Gabriel Falcão', 'manual'),
+    (
+        master_doc,
+        "AgentZero.tex",
+        u"AgentZero Documentation",
+        u"Gabriel Falcão",
+        "manual",
+    )
 ]
 
-man_pages = [
-    (master_doc, 'agentzero', u'AgentZero Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "agentzero", u"AgentZero Documentation", [author], 1)]
 
 texinfo_documents = [
-    (master_doc, 'AgentZero', u'AgentZero Documentation',
-     author, 'AgentZero', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "AgentZero",
+        u"AgentZero Documentation",
+        author,
+        "AgentZero",
+        "One line description of project.",
+        "Miscellaneous",
+    )
 ]
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3/', None),
-
-    'gevent': ('http://www.gevent.org/', None),
-    'msgpack': ('https://msgpack-python.readthedocs.io/en/latest/', None),
-    'redis': ('https://redis-py.readthedocs.org/en/latest/', None),
-    'zmq': ('https://pyzmq.readthedocs.org/en/latest/', None),
+    "python": ("https://docs.python.org/3/", None),
+    "gevent": ("http://www.gevent.org/", None),
+    "msgpack": ("https://msgpack-python.readthedocs.io/en/latest/", None),
+    "redis": ("https://redis-py.readthedocs.org/en/latest/", None),
+    "zmq": ("https://pyzmq.readthedocs.org/en/latest/", None),
 }

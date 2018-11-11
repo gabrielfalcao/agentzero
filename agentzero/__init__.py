@@ -11,12 +11,12 @@ from agentzero.errors import SocketConnectError
 from agentzero import serializers
 
 __all__ = [
-    'version',
-    'SocketManager',
-    'ZMQPubHandler',
-    'SocketConnectError',
-    'SocketBindError',
-    'SocketAlreadyExists',
-    'SocketNotFound',
-    'serializers',
+    "version",
+    "SocketManager",
+    "ZMQPubHandler",
+    "SocketConnectError",
+    "SocketBindError",
+    "SocketAlreadyExists",
+    "SocketNotFound",
+    "serializers",
 ]
