@@ -14,7 +14,11 @@ def read_version():
     return ctx["version"]
 
 
-dependencies = ["pyzmq==16.0.2", "msgpack==0.5.6", "six==1.11.0"]
+dependencies = [
+    "gevent==1.4.0",
+    "msgpack==0.6.1",
+    "pyzmq==18.0.1",
+]
 
 
 setup(
