@@ -21,8 +21,7 @@ AGENTZERO_LOGLEVEL		:= DEBUG
 AGENTZERO_API_ADDRESS		:=
 AGENTZERO_PUBLISHER_ADDRESS	:=
 PATH				:= $(PATH):$(shell pwd)
-executable			:= pipenv run python -m agentzero.console.main
-PIPENV_IGNORE_VIRTUALENVS	:= 1
+executable			:= poetry run python -m agentzero.console.main
 export TZ
 export PATH
 export PYTHONPATH
@@ -32,7 +31,6 @@ export DEBIAN_FRONTEND
 export PYTHONUNBUFFERED
 export AGENTZERO_API_ADDRESS
 export AGENTZERO_PUBLISHER_ADDRESS
-export PIPENV_IGNORE_VIRTUALENVS
 
 tests: lint unit functional
 
@@ -49,12 +47,12 @@ clean:
 	git clean -Xdf
 
 unit:
-	@pipenv run nosetests --cover-erase --cover-package=agentzero \
+	@poetry run nosetests --cover-erase --cover-package=agentzero \
 	    tests/unit
 
 
 functional:
-	@pipenv run nosetests \
+	@poetry run nosetests \
 	    --cover-package=agentzero.core \
 	    --cover-package=agentzero.serializers \
 	    tests/functional
@@ -67,16 +65,16 @@ prepare: remove
 	ensure-dependencies
 
 remove:
-	-@pipenv uninstall -y agentzero
+	-@pipenv run pip uninstall -y agentzero
 
 ensure-dependencies:
-	@CFLAGS='-std=c99' pipenv install --dev --skip-lock -r development.txt
+	@CFLAGS='-std=c99' poetry install
 
 release: tests
 	@./.release
 	@rm -rf dist
-	@pipenv run python setup.py sdist
-	@pipenv run twine upload dist/*.tar.gz
+	@poetry run python setup.py sdist
+	@poetry run twine upload dist/*.tar.gz
 
 list:
 	@$(executable) list

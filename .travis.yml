@@ -5,10 +5,10 @@ python:
   - "3.6"
 
 install:
-  - pip install pipenv
+  - pip install poetry
 
 script:
-  - pipenv install --dev --skip-lock
+  - poetry install
   - make unit functional
 
 after_success:
