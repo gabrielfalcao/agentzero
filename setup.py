@@ -15,9 +15,9 @@ def read_version():
 
 
 dependencies = [
-    "gevent==1.4.0",
-    "msgpack==0.6.1",
-    "pyzmq==18.0.1",
+    "gevent>=1.4.0",
+    "msgpack>=0.6.1",
+    "pyzmq>=18.1.1",
 ]
 
 
