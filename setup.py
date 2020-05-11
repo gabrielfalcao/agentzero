@@ -1,24 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import ast
 import os
 from setuptools import setup, find_packages
 
 
-local_file = lambda *f: open(os.path.join(os.path.dirname(__file__), *f)).read()
+def local_file(*f):
+    with open(os.path.join(os.path.dirname(__file__), *f), "r") as fd:
+        return fd.read()
+
+
+class VersionFinder(ast.NodeVisitor):
+    VARIABLE_NAME = "version"
+
+    def __init__(self):
+        self.version = None
+
+    def visit_Assign(self, node):
+        try:
+            if node.targets[0].id == self.VARIABLE_NAME:
+                self.version = node.value.s
+        except Exception:
+            self.version = None
 
 
 def read_version():
-    ctx = {}
-    exec(local_file("agentzero", "version.py"), ctx)
-    return ctx["version"]
-
-
-dependencies = [
-    "gevent>=1.4.0",
-    "msgpack>=0.6.1",
-    "pyzmq>=18.1.1",
-]
+    finder = VersionFinder()
+    finder.visit(ast.parse(local_file("agentzero", "version.py")))
+    return finder.version
 
 
 setup(
@@ -38,7 +47,7 @@ setup(
     author_email="gabriel@nacaolivre.org",
     url="https://github.com/gabrielfalcao/agentzero",
     packages=find_packages(exclude=["*tests*"]),
-    install_requires=dependencies,
+    install_requires=local_file("requirements.txt").splitlines(),
     include_package_data=True,
     package_data={
         "agentzero": "COPYING *.md agentzero/web agentzero/web/* agentzero/web/dist agentzero/web/dist/* agentzero/web/templates agentzero/web/templates/*".split()
