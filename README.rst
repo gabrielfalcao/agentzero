@@ -7,10 +7,10 @@ AgentZero 0.4.6 - high-level ZeroMQ socket managers
 .. image:: https://img.shields.io/codecov/c/github/gabrielfalcao/agentzero
    :target: https://codecov.io/gh/gabrielfalcao/agentzero
 
-.. image:: https://img.shields.io/github/workflow/status/gabrielfalcao/agentzero/python-3.6?label=python%203.6
+.. image:: https://img.shields.io/github/workflow/status/gabrielfalcao/agentzero/python-3.6?label=python%203.6.8
    :target: https://github.com/gabrielfalcao/agentzero/actions
 
-.. image:: https://img.shields.io/github/workflow/status/gabrielfalcao/agentzero/python-3.7?label=python%203.7
+.. image:: https://img.shields.io/github/workflow/status/gabrielfalcao/agentzero/python-3.7?label=python%203.7.5
    :target: https://github.com/gabrielfalcao/agentzero/actions
 
 .. image:: https://img.shields.io/readthedocs/agentzero

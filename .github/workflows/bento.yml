@@ -1,0 +1,16 @@
+name: Bento Checks
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - id: bento
+      name: Bento
+      uses: returntocorp/bento-action@v1
+      with:
+        acceptTermsWithEmail: gabriel@nacaolivre.org

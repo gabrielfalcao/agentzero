@@ -1,4 +1,4 @@
-name: python-3.7
+name: Python 3.7.5
 
 on:
   push:
@@ -8,14 +8,16 @@ on:
 
 jobs:
   build:
+    name: "Python Tests"
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+
+    - name: setup pyenv
+      uses: "gabrielfalcao/pyenv-action@v5"
       with:
-        python-version: 3.7
+        default: 3.7.5
 
     - name: Cache VirtualEnv
       id: cache-venv
@@ -23,15 +25,6 @@ jobs:
       with:
         path: .venv
         key: ${{ runner.os }}-${{ hashFiles('*.txt') }}-python3.7
-
-    - uses: actions/checkout@v1
-      name: "Checkout Code"
-
-    - id: bento
-      name: Bento
-      uses: returntocorp/bento-action@v1
-      with:
-        acceptTermsWithEmail: gabriel@nacaolivre.org
 
     - name: Unit Tests
       run: make unit
