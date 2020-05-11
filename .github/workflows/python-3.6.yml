@@ -18,7 +18,7 @@ jobs:
       run: sudo apt-get install libgdbm-dev libreadline-dev coreutils bzip2 gcc libc-dev libffi-dev openssl-dev sqlite-dev zlibc make
 
     - name: setup pyenv
-      uses: "gabrielfalcao/pyenv-action@v5"
+      uses: "gabrielfalcao/pyenv-action@v6"
       with:
         default: 3.6.8
 
