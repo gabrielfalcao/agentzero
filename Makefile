@@ -96,6 +96,7 @@ dist: | clean
 	$(VENV)/bin/python setup.py build sdist
 
 pypi: dist | $(VENV)/bin/twine
+	$(VENV)/bin/twine check dist/*.tar.gz
 	$(VENV)/bin/twine upload dist/*.tar.gz
 
 # cleanup temp files

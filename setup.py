@@ -48,9 +48,26 @@ setup(
     url="https://github.com/gabrielfalcao/agentzero",
     packages=find_packages(exclude=["*tests*"]),
     install_requires=local_file("requirements.txt").splitlines(),
+    long_description_content_type='text/x-rst',
+    python_requires=">=3.6",
     include_package_data=True,
     package_data={
         "agentzero": "COPYING *.md agentzero/web agentzero/web/* agentzero/web/dist agentzero/web/dist/* agentzero/web/templates agentzero/web/templates/*".split()
     },
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Console",
+        "Environment :: Web Environment",
+        "Environment :: MacOS X",
+        "Environment :: Handhelds/PDA's",
+        "Environment :: Win32 (MS Windows)",
+        "Environment :: X11 Applications",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: Implementation :: CPython",
+    ],
     zip_safe=False,
 )

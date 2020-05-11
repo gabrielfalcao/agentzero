@@ -1,17 +1,47 @@
 AgentZero 0.4.6 - high-level ZeroMQ socket managers
 ===================================================
 
-.. image:: https://readthedocs.org/projects/agentzero/badge/?version=latest
-   :target: http://agentzero.readthedocs.io/en/latest/?badge=latest
+.. image:: https://img.shields.io/pypi/dm/agentzero
+   :target: https://pypi.org/project/agentzero
 
-.. image:: https://travis-ci.org/gabrielfalcao/agentzero.svg?branch=master
-   :target: https://travis-ci.org/gabrielfalcao/agentzero
-
-.. image:: https://codecov.io/gh/gabrielfalcao/agentzero/branch/master/graph/badge.svg
+.. image:: https://img.shields.io/codecov/c/github/gabrielfalcao/agentzero
    :target: https://codecov.io/gh/gabrielfalcao/agentzero
 
-.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
-   :target: https://saythanks.io/to/gabrielfalcao
+.. image:: https://img.shields.io/github/workflow/status/gabrielfalcao/agentzero/python-3.6?label=python%203.6
+   :target: https://github.com/gabrielfalcao/agentzero/actions
+
+.. image:: https://img.shields.io/github/workflow/status/gabrielfalcao/agentzero/python-3.7?label=python%203.7
+   :target: https://github.com/gabrielfalcao/agentzero/actions
+
+.. image:: https://img.shields.io/readthedocs/agentzero
+   :target: https://agentzero.readthedocs.io/
+
+.. image:: https://img.shields.io/github/license/gabrielfalcao/agentzero?label=Github%20License
+   :target: https://github.com/gabrielfalcao/agentzero/blob/master/LICENSE
+
+.. image:: https://img.shields.io/pypi/v/agentzero
+   :target: https://pypi.org/project/agentzero
+
+.. image:: https://img.shields.io/pypi/l/agentzero?label=PyPi%20License
+   :target: https://pypi.org/project/agentzero
+
+.. image:: https://img.shields.io/pypi/format/agentzero
+   :target: https://pypi.org/project/agentzero
+
+.. image:: https://img.shields.io/pypi/status/agentzero
+   :target: https://pypi.org/project/agentzero
+
+.. image:: https://img.shields.io/pypi/pyversions/agentzero
+   :target: https://pypi.org/project/agentzero
+
+.. image:: https://img.shields.io/pypi/implementation/agentzero
+   :target: https://pypi.org/project/agentzero
+
+.. image:: https://img.shields.io/snyk/vulnerabilities/github/gabrielfalcao/agentzero
+   :target: https://github.com/gabrielfalcao/agentzero/network/alerts
+
+.. image:: https://img.shields.io/github/v/tag/gabrielfalcao/agentzero
+   :target: https://github.com/gabrielfalcao/agentzero/releases
 
 **Supports Python 2.7 and 3.6**
 
