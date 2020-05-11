@@ -14,8 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Update Apt
+      run: sudo apt-get update
+
     - name: Install dependencies
-      run: sudo apt-get install libgdbm-dev libreadline-dev coreutils bzip2 gcc libc-dev libffi-dev openssl-dev sqlite-dev zlibc make
+      run: sudo apt-get install -y libgdbm-dev libreadline-dev coreutils bzip2 gcc libc-dev libffi-dev openssl-dev sqlite-dev zlibc make
 
     - name: setup pyenv
       uses: "gabrielfalcao/pyenv-action@v6"
