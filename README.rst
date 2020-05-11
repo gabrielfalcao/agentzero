@@ -17,7 +17,6 @@ AgentZero 0.4.6 - high-level ZeroMQ socket managers
 
 Looking for `documentation <https://agentzero.readthedocs.io/en/latest/>`_ ?
 
---------------------------------------------------------------------------------------
 
 What is AgentZero ?
 -------------------

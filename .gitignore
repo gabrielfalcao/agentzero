@@ -25,3 +25,4 @@ tasks.md
 .tox/
 *.lock
 .venv/
+build/
