@@ -5,8 +5,6 @@ ENV PYTHONUNBUFFERED true
 ENV VIRTUAL_ENV      /srv/venv
 ENV PATH             $VIRTUAL_ENV/bin:$PATH
 
-MAINTAINER gabriel@nacaolivre.org
-
 RUN apt-get update \
   && apt-get --yes --no-install-recommends install \
     gcc \

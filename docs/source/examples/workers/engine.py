@@ -118,7 +118,8 @@ class StorageBackend(object):
 
 
 class Pipeline(object):
-    def __init__(self, name, steps=[]):
+    def __init__(self, name, steps=None):
+        steps = steps or []
         self.name = name
         self.actions = Speaker(
             'actions',
@@ -141,7 +142,7 @@ class Pipeline(object):
         for step in self.steps:
             self.sockets.create(step, zmq.PUSH)
 
-        for action in self.actions.actions.keys():
+        for action in list(self.actions.actions.keys()):
             self.bind_action(action)
 
         self.total_actions = len(self.actions.actions)
@@ -234,13 +235,13 @@ class Pipeline(object):
             re.compile(r'error'): self.actions.error,
         }
         matched = False
-        for regex, action in ROUTES.items():
+        for regex, action in list(ROUTES.items()):
             if regex.search(event.topic):
                 action.shout(event)
                 matched = True
 
         if not matched:
-            print 'unmatched event', event.topic, event.data
+            print('unmatched event', event.topic, event.data)
 
     def drain_jobs_in(self):
         while self.should_run():

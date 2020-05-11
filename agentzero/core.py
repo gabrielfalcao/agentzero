@@ -31,6 +31,7 @@ DEFAULT_TIMEOUT_IN_SECONDS = 10
 # in miliseconds
 DEFAULT_POLLING_TIMEOUT = DEFAULT_TIMEOUT_IN_SECONDS * 1000
 
+logger = logging.getLogger(__name__)
 
 class SocketManager(object):
     """High-level abstraction for zeromq's non-blocking api.
@@ -108,12 +109,11 @@ class SocketManager(object):
         for socket in list(self.sockets.values()):
             try:
                 socket.close()
-            except (Exception, BaseException):
-                pass
+            except Exception as e:
+                logger.warning(f"failed to close socket {socket!r}: {e}")
+
         self.addresses.clear()
         self.registry.clear()
-
-        # self.context.destroy()
 
     def send_safe(self, name, data, *args, **kw):
         """serializes the data with the configured ``serialization_backend``,
@@ -420,8 +420,9 @@ class SocketManager(object):
         self.registry.pop(socket, None)
         try:
             self.poller.unregister(socket)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f"Failed to unregister socket {socket!r}: {e}")
+
         return True
 
     def connect(self, socket_name, address, polling_mechanism):
