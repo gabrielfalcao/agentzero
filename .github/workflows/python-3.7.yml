@@ -14,6 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install dependencies
+      run: sudo apt-get install libgdbm-dev libreadline-dev coreutils bzip2 gcc libc-dev libffi-dev openssl-dev sqlite-dev zlibc make
+
     - name: setup pyenv
       uses: "gabrielfalcao/pyenv-action@v5"
       with:
