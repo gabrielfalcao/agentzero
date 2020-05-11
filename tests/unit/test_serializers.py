@@ -56,4 +56,4 @@ def test_msgpack_unpack():
     data = serializer.unpack(packed)
 
     # Then it should have returned a dict
-    data.should.equal({b"foo": b"bar"})
+    data.should.equal({"foo": "bar"})
