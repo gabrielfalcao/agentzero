@@ -30,6 +30,9 @@ def read_version():
     return finder.version
 
 
+README = local_file("README.rst")
+# print(f"\n{' ' * 10}\n{README}\n{' ' * 10}\n")
+
 setup(
     name="agentzero",
     version=read_version(),
@@ -39,7 +42,8 @@ setup(
             "It works great with gevent, making it possible to create network applications with simple code that performs complex operations.",
         ]
     ),
-    long_description=local_file("README.rst"),
+    long_description=README,
+    long_description_content_type='text/x-rst',
     entry_points={
         "console_scripts": ["agentzero = agentzero.console.main:entrypoint"]
     },
@@ -48,11 +52,10 @@ setup(
     url="https://github.com/gabrielfalcao/agentzero",
     packages=find_packages(exclude=["*tests*"]),
     install_requires=local_file("requirements.txt").splitlines(),
-    long_description_content_type='text/x-rst',
     python_requires=">=3.6",
     include_package_data=True,
     package_data={
-        "agentzero": "COPYING *.md agentzero/web agentzero/web/* agentzero/web/dist agentzero/web/dist/* agentzero/web/templates agentzero/web/templates/*".split()
+        "agentzero": "COPYING *.rst *.md agentzero/web agentzero/web/* agentzero/web/dist agentzero/web/dist/* agentzero/web/templates agentzero/web/templates/*".split()
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",

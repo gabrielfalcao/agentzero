@@ -49,7 +49,7 @@ all: dependencies tests docs
 
 $(VENV):  # creates $(VENV) folder if does not exist
 	python3 -mvenv $(VENV)
-	$(VENV)/bin/pip install -U pip setuptools
+	$(VENV)/bin/pip install -U pip setuptools wheel
 
 $(VENV)/bin/sphinx-build $(VENV)/bin/twine $(VENV)/bin/nosetests $(VENV)/bin/python $(VENV)/bin/pip: # installs latest pip
 	test -e $(VENV)/bin/pip || make $(VENV)
@@ -92,12 +92,12 @@ release: | clean bento unit functional tests html
 bento: | $(BENTO_BIN)
 	$(BENTO_BIN) --agree --email=$(BENTO_EMAIL) check --all
 
-dist: | clean
+dist: clean | $(VENV)/bin/python
 	$(VENV)/bin/python setup.py build sdist
 
 pypi: dist | $(VENV)/bin/twine
 	$(VENV)/bin/twine check dist/*.tar.gz
-	$(VENV)/bin/twine upload dist/*.tar.gz
+	# $(VENV)/bin/twine upload dist/*.tar.gz
 
 # cleanup temp files
 clean:

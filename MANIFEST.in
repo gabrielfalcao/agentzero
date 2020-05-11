@@ -1,3 +1,3 @@
-include COPYING *.rst
+include *.cfg *.py *.rst *.txt COPYING
 recursive-include agentzero/docs *.*
 recursive-include agentzero/docs/source *.*
